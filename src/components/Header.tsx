@@ -3,16 +3,36 @@ import { Menu, X, LogIn, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import logoImg from "@/assets/images/logo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [scrolled, setScrolled] = React.useState(false);
+  const [hidden, setHidden] = React.useState(false);
+  const [atTop, setAtTop] = React.useState(true);
+  const [logoKey, setLogoKey] = React.useState(0);
+  const lastScrollY = React.useRef(0);
+  const wasAtTop = React.useRef(true);
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
   React.useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll);
+    const onScroll = () => {
+      const y = window.scrollY;
+      const nowAtTop = y < 80;
+      setAtTop(nowAtTop);
+      // Re-trigger pop animation each time we return to top
+      if (nowAtTop && !wasAtTop.current) {
+        setLogoKey(k => k + 1);
+      }
+      wasAtTop.current = nowAtTop;
+      if (y > lastScrollY.current && y > 80) {
+        setHidden(true);
+      } else {
+        setHidden(false);
+      }
+      lastScrollY.current = y;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
@@ -23,35 +43,53 @@ const Header = () => {
   ];
 
   return (
-    <motion.header
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-black/95 backdrop-blur-md border-b border-white/10 py-3' : 'bg-transparent py-5'
-      }`}
-    >
+    <>
+      {/* ── Big pop-in logo fixed top-left, only when at top ── */}
+      <AnimatePresence>
+        {atTop && (
+          <motion.div
+            key={logoKey}
+            className="fixed top-4 left-10 z-[60] cursor-pointer pointer-events-auto"
+            initial={{ scale: 0, opacity: 0, rotate: -15 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            exit={{ scale: 0, opacity: 0, rotate: 15 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 18, duration: 0.5 }}
+            onClick={() => navigate('/')}
+            whileHover={{ scale: 1.07 }}
+          >
+            <img
+              src={logoImg}
+              alt="IEDC CEM Logo"
+              className="h-48 w-auto object-contain drop-shadow-[0_0_24px_rgba(255,140,0,0.5)]"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <motion.header
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: hidden ? -100 : 0, opacity: hidden ? 0 : 1 }}
+        transition={{ duration: 0.35, ease: 'easeInOut' }}
+        className="fixed top-0 left-0 right-0 z-50 py-5 bg-transparent"
+      >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          {/* Logo */}
+        <div className="grid grid-cols-3 items-center">
+          {/* Logo — hidden when at top (big logo covers it), shown when scrolled */}
           <motion.div
             className="flex items-center space-x-3 cursor-pointer"
             onClick={() => navigate('/')}
             whileHover={{ scale: 1.03 }}
+            animate={{ opacity: atTop ? 0 : 1 }}
+            transition={{ duration: 0.2 }}
           >
-            <div className="relative">
-              <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
-                <span className="text-black font-black text-lg">I</span>
-              </div>
-            </div>
-            <div>
-              <h1 className="text-white font-black text-xl tracking-tight">IEDC</h1>
-              <p className="text-orange-400 text-xs font-medium tracking-widest uppercase">Innovation Hub</p>
-            </div>
+            <img
+              src={logoImg}
+              alt="IEDC CEM Logo"
+              className="h-10 w-auto object-contain"
+            />
           </motion.div>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-1">
+          {/* Desktop Nav — truly centered */}
+          <nav className="hidden md:flex items-center justify-center space-x-2">
             {navLinks.map((link, i) => (
               <motion.a
                 key={link.label}
@@ -59,7 +97,7 @@ const Header = () => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.07 }}
-                className="relative px-4 py-2 text-sm font-medium text-white/70 hover:text-white transition-colors group"
+                className="relative px-5 py-2 text-base font-semibold text-white/80 hover:text-white transition-colors group"
               >
                 {link.label}
                 <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-orange-500 group-hover:w-full transition-all duration-300"></span>
@@ -68,7 +106,7 @@ const Header = () => {
           </nav>
 
           {/* CTA Buttons */}
-          <div className="hidden md:flex items-center space-x-3">
+          <div className="hidden md:flex items-center justify-end space-x-3">
             {user ? (
               <>
                 <button
@@ -151,6 +189,7 @@ const Header = () => {
         </AnimatePresence>
       </div>
     </motion.header>
+    </>
   );
 };
 

@@ -12,6 +12,7 @@ const Index = () => {
       <Header />
       <Hero />
       <About />
+
       <Team />
       <Footer />
     </div>
