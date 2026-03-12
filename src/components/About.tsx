@@ -28,151 +28,150 @@ function Counter({ to, suffix = "" }: { to: number | string; suffix?: string }) 
   return <span ref={ref}>0{suffix}</span>;
 }
 
-/* ─── Circular / 3D Carousel ────────────────────────────────────── */
+/* ─── Cylinder Carousel ─────────────────────────────────────────── */
+// Use only confirmed-working images; duplicates fill slots until real photos are added
 const IMAGES = [
-  { src: img1, caption: "Innovation Hackathon" },
-  { src: img2, caption: "Ideathon 2024" },
-  { src: img3, caption: "Startup Bootcamp" },
-  { src: img4, caption: "Demo Day" },
-  { src: img5, caption: "Community Meetup" },
-  { src: img6, caption: "Workshop Series" },
-  { src: img7, caption: "Mentor Connect" },
-  { src: img8, caption: "Product Launch" },
+  img5, img2, img3, img6, img7, img8, img2, img3,
 ];
 
 const TOTAL = IMAGES.length;
-const VISIBLE = 5; // how many slots to render
+const CARD_W = 260;
+const CARD_H = 195;
+const RADIUS = 340;
+const ANGLE  = 360 / TOTAL;
 
 function RoundCarousel() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const next = useCallback(() => setActive((p) => (p + 1) % TOTAL), []);
-  const prev = useCallback(() => setActive((p) => (p - 1 + TOTAL) % TOTAL), []);
+  const next = useCallback(() => setActive(p => (p + 1) % TOTAL), []);
+  const prev = useCallback(() => setActive(p => (p - 1 + TOTAL) % TOTAL), []);
 
   useEffect(() => {
     if (paused) return;
-    timerRef.current = setInterval(next, 3200);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    const t = setInterval(next, 3200);
+    return () => clearInterval(t);
   }, [paused, next]);
 
-  /* Compute each card's position offset relative to active */
-  const getSlot = (idx: number) => {
-    let offset = idx - active;
-    if (offset > TOTAL / 2) offset -= TOTAL;
-    if (offset < -TOTAL / 2) offset += TOTAL;
-    return offset;
-  };
-
-  /* Visual config per slot index (-2,-1,0,1,2) */
-  const slotStyle = (slot: number): React.CSSProperties & { zIndex: number; opacity: number } => {
-    const map: Record<number, { x: number; y: number; scale: number; opacity: number; rotateY: number; zIndex: number; blur: number }> = {
-      "-2": { x: -320, y:  40, scale: 0.50, opacity: 0.18, rotateY:  40, zIndex: 1,  blur: 4 },
-      "-1": { x: -185, y:  18, scale: 0.70, opacity: 0.50, rotateY:  28, zIndex: 2,  blur: 2 },
-       "0": { x:    0, y:   0, scale: 1.00, opacity: 1.00, rotateY:   0, zIndex: 10, blur: 0 },
-       "1": { x:  185, y:  18, scale: 0.70, opacity: 0.50, rotateY: -28, zIndex: 2,  blur: 2 },
-       "2": { x:  320, y:  40, scale: 0.50, opacity: 0.18, rotateY: -40, zIndex: 1,  blur: 4 },
-    };
-    return map[String(slot)] ?? { x: 0, y: 0, scale: 0, opacity: 0, rotateY: 0, zIndex: 0, blur: 10 };
+  /* How far each card is from the front (0 = front, up to TOTAL/2 = back) */
+  const dist = (i: number) => {
+    const d = ((i - active) % TOTAL + TOTAL) % TOTAL;
+    return Math.min(d, TOTAL - d);
   };
 
   return (
     <div
-      className="relative flex flex-col items-center"
+      className="relative flex flex-col items-center select-none"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Elliptical orbit ring */}
-      <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[580px] h-[200px] rounded-[50%] border border-orange-500/15 pointer-events-none" />
-      <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[160px] rounded-[50%] border border-dashed border-orange-500/8 pointer-events-none" />
+      {/* Perspective viewport */}
+      <div
+        style={{
+          width: `${CARD_W}px`,
+          height: `${CARD_H + 48}px`,
+          perspective: '1100px',
+          perspectiveOrigin: '50% 50%',
+          overflow: 'visible',
+        }}
+      >
+        {/* The cylinder — only this rotates */}
+        <div
+          style={{
+            width: `${CARD_W}px`,
+            height: `${CARD_H}px`,
+            position: 'relative',
+            transformStyle: 'preserve-3d',
+            transform: `rotateY(${-active * ANGLE}deg)`,
+            transition: 'transform 0.75s cubic-bezier(0.32, 0.72, 0, 1)',
+            willChange: 'transform',
+          }}
+        >
+          {IMAGES.map((img, i) => {
+            const d = dist(i);
+            const isActive = d === 0;
+            // Opacity: front=1, ±1=0.55, ±2=0.28, back=0.08
+            const opacity = [1, 0.55, 0.28, 0.12, 0.08][Math.min(d, 4)];
+            // Glass tint strength
+            const tint = isActive ? 0 : Math.min(d * 0.22, 0.7);
 
-      {/* Cards stage */}
-      <div className="relative w-full h-[340px] perspective-[1000px]">
-        {Array.from({ length: TOTAL }).map((_, idx) => {
-          const slot = getSlot(idx);
-          if (Math.abs(slot) > 2) return null; // only show 5 slots
-
-          const st = slotStyle(slot);
-          const isActive = slot === 0;
-
-          return (
-            <motion.div
-              key={idx}
-              onClick={() => setActive(idx)}
-              animate={{
-                x: st.x,
-                y: st.y,
-                scale: st.scale,
-                opacity: st.opacity,
-                rotateY: st.rotateY,
-                filter: `blur(${st.blur}px)`,
-              }}
-              transition={{ duration: 0.55, ease: [0.32, 0.72, 0, 1] }}
-              style={{ zIndex: st.zIndex, position: 'absolute', left: '50%', top: 0, marginLeft: -120 }}
-              className="w-[240px] cursor-pointer"
-            >
-              {/* Card */}
+            return (
               <div
-                className={`relative w-full rounded-2xl overflow-hidden transition-all duration-500 ${
-                  isActive
-                    ? 'ring-2 ring-orange-500/70 shadow-[0_0_40px_rgba(255,106,0,0.35)]'
-                    : 'ring-1 ring-white/10'
-                }`}
-                style={{ aspectRatio: '4/3' }}
+                key={i}
+                onClick={() => setActive(i)}
+                style={{
+                  position: 'absolute',
+                  width: `${CARD_W}px`,
+                  height: `${CARD_H}px`,
+                  transform: `rotateY(${i * ANGLE}deg) translateZ(${RADIUS}px)`,
+                  backfaceVisibility: 'hidden',
+                  cursor: 'pointer',
+                }}
               >
-                <img
-                  src={IMAGES[idx].src}
-                  alt={IMAGES[idx].caption}
-                  className="w-full h-full object-cover"
-                  draggable={false}
-                />
-
-                {/* Transparency gradient overlay — always present, stronger on inactive */}
                 <div
-                  className="absolute inset-0"
+                  className="relative w-full h-full rounded-2xl overflow-hidden"
                   style={{
-                    background: isActive
-                      ? 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.75) 100%)'
-                      : 'linear-gradient(180deg, rgba(10,10,10,0.45) 0%, rgba(10,10,10,0.80) 100%)',
+                    opacity,
+                    transition: 'opacity 0.5s ease, box-shadow 0.5s ease',
+                    boxShadow: isActive
+                      ? '0 0 48px rgba(255,106,0,0.4), 0 0 0 1.5px rgba(255,106,0,0.55)'
+                      : '0 0 0 1px rgba(255,255,255,0.07)',
                   }}
-                />
+                >
+                  <img
+                    src={img}
+                    alt="IEDC event"
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                    loading="lazy"
+                    onError={(e) => {
+                      const el = e.currentTarget;
+                      if (!el.dataset.fallback) {
+                        el.dataset.fallback = '1';
+                        el.src = img8;
+                      }
+                    }}
+                  />
 
-                {/* Frosted glass tint on inactive */}
-                {!isActive && (
-                  <div className="absolute inset-0 backdrop-blur-[1px] bg-[#0a0a0a]/30" />
-                )}
+                  {/* Bottom gradient */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: `linear-gradient(180deg, rgba(0,0,0,${tint}) 0%, rgba(0,0,0,${Math.min(tint + 0.4, 0.88)}) 100%)`,
+                    }}
+                  />
 
-                {/* Orange scan shimmer on active */}
-                {isActive && (
-                  <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 via-transparent to-transparent animate-pulse" />
-                )}
+                  {/* Glass shimmer on non-active */}
+                  {!isActive && (
+                    <div
+                      className="absolute inset-0 rounded-2xl"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 60%)',
+                        backdropFilter: d === 1 ? 'blur(1px)' : 'none',
+                      }}
+                    />
+                  )}
 
-                {/* Corner brackets on active */}
-                {isActive && (
-                  <>
-                    <div className="absolute top-2 left-2 w-5 h-5 border-t-2 border-l-2 border-orange-500/80" />
-                    <div className="absolute top-2 right-2 w-5 h-5 border-t-2 border-r-2 border-orange-500/80" />
-                    <div className="absolute bottom-2 left-2 w-5 h-5 border-b-2 border-l-2 border-orange-500/80" />
-                    <div className="absolute bottom-2 right-2 w-5 h-5 border-b-2 border-r-2 border-orange-500/80" />
-                  </>
-                )}
+                  {/* Corner brackets on active */}
+                  {isActive && (
+                    <>
+                      <div className="absolute top-2 left-2 w-5 h-5 border-t-2 border-l-2 border-orange-500/80" />
+                      <div className="absolute top-2 right-2 w-5 h-5 border-t-2 border-r-2 border-orange-500/80" />
+                      <div className="absolute bottom-8 left-2 w-5 h-5 border-b-2 border-l-2 border-orange-500/80" />
+                      <div className="absolute bottom-8 right-2 w-5 h-5 border-b-2 border-r-2 border-orange-500/80" />
+                    </>
+                  )}
 
-                {/* Caption */}
-                <div className="absolute bottom-0 left-0 right-0 px-3 pb-2.5 pt-6">
-                  <p className={`text-xs font-mono font-bold tracking-widest uppercase transition-opacity duration-300 ${isActive ? 'text-orange-400 opacity-100' : 'text-white/40 opacity-60'}`}>
-                    {isActive && <span className="text-orange-500">// </span>}
-                    {IMAGES[idx].caption}
-                  </p>
+
                 </div>
               </div>
-            </motion.div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
-      {/* Dot indicators + controls */}
-      <div className="flex items-center gap-5 mt-6">
+      {/* Controls */}
+      <div className="flex items-center gap-5 mt-4">
         <button
           onClick={prev}
           className="w-8 h-8 flex items-center justify-center rounded-full border border-white/15 text-white/50 hover:border-orange-500/60 hover:text-orange-400 transition-all"
@@ -186,9 +185,7 @@ function RoundCarousel() {
               key={i}
               onClick={() => setActive(i)}
               className={`rounded-full transition-all duration-300 ${
-                i === active
-                  ? 'w-6 h-2 bg-orange-500'
-                  : 'w-2 h-2 bg-white/20 hover:bg-white/40'
+                i === active ? 'w-6 h-2 bg-orange-500' : 'w-2 h-2 bg-white/20 hover:bg-white/40'
               }`}
             />
           ))}
@@ -202,8 +199,7 @@ function RoundCarousel() {
         </button>
       </div>
 
-      {/* Active image count label */}
-      <p className="mt-3 text-[11px] font-mono text-white/25 tracking-widest">
+      <p className="mt-2 text-[11px] font-mono text-white/25 tracking-widest">
         {String(active + 1).padStart(2, '0')} / {String(TOTAL).padStart(2, '0')}
       </p>
     </div>
