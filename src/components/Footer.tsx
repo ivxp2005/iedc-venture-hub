@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Twitter, Linkedin, Instagram, Facebook, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -6,10 +6,10 @@ const Footer = () => {
   const [email, setEmail] = useState('');
 
   const socialLinks = [
-    { icon: Twitter,   href: "#", label: "Twitter" },
-    { icon: Linkedin,  href: "#", label: "LinkedIn" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Facebook,  href: "#", label: "Facebook" },
+    { icon: Twitter,   href: "https://twitter.com/", label: "Twitter" },
+    { icon: Linkedin,  href: "https://linkedin.com/company/", label: "LinkedIn" },
+    { icon: Instagram, href: "https://instagram.com/", label: "Instagram" },
+    { icon: Facebook,  href: "https://facebook.com/", label: "Facebook" },
   ];
 
   const quickLinks = [
@@ -17,6 +17,7 @@ const Footer = () => {
     { title: "Events",          href: "#events" },
     { title: "Programs",        href: "#programs" },
     { title: "Success Stories", href: "#success" },
+    { title: "Team",            href: "#team" },
     { title: "Contact",         href: "#contact" },
   ];
 
@@ -55,7 +56,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3 text-white/40">
                 <Mail className="w-4 h-4 text-orange-500 flex-shrink-0" />
-                <span className="text-sm">hello@iedc.edu.in</span>
+                <a href="mailto:iedccem@gmail.com" className="text-sm hover:text-orange-400 transition-colors">iedccem@gmail.com</a>
               </div>
             </div>
           </div>
@@ -152,7 +153,7 @@ const Footer = () => {
         {/* Bottom bar */}
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/30 text-sm">
-            Â© 2024 IEDC. All rights reserved. Empowering innovation since 2018.
+            © 2025 IEDC CEM. All rights reserved. Empowering innovation since 2018.
           </p>
           <div className="flex gap-6 text-sm text-white/30">
             <a href="#" className="hover:text-orange-500 transition-colors">Privacy Policy</a>

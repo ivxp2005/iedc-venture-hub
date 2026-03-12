@@ -8,10 +8,29 @@
   scroll-behavior: smooth;
 }
 
+/* ── Light theme: invert entire page (black ↔ white swap) ── */
+[data-theme="light"] body {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Re-invert images, videos, and iframes so they look natural */
+[data-theme="light"] body img,
+[data-theme="light"] body video,
+[data-theme="light"] body iframe,
+[data-theme="light"] body canvas {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Smooth transition when toggling */
+body {
+  transition: filter 0.35s ease;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background-color: #0a0a0a;
   color: #ffffff;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3, h4 {
@@ -20,7 +39,7 @@ h1, h2, h3, h4 {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0a0a0a; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: #ff6a00; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #ff8c38; }
 

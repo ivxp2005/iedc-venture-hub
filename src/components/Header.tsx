@@ -1,5 +1,6 @@
-﻿import React from "react";
-import { Menu, X, LogIn, LogOut } from "lucide-react";
+import React from "react";
+import { Menu, X, LogIn, LogOut, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,6 +8,7 @@ import logoImg from "@/assets/images/logo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const { theme, toggleTheme } = useTheme();
   const [hidden, setHidden] = React.useState(false);
   const [atTop, setAtTop] = React.useState(true);
   const [logoKey, setLogoKey] = React.useState(0);
@@ -39,7 +41,10 @@ const Header = () => {
   const navLinks = [
     { label: 'Home', href: '#home' },
     { label: 'About', href: '#about' },
+    { label: 'Events', href: '#events' },
+    { label: 'Programs', href: '#programs' },
     { label: 'Team', href: '#team' },
+    { label: 'Contact', href: '#contact' },
   ];
 
   return (
@@ -107,11 +112,28 @@ const Header = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center justify-end space-x-3">
+            {/* Theme toggle */}
+            <motion.button
+              onClick={toggleTheme}
+              whileTap={{ rotate: 20, scale: 0.9 }}
+              whileHover={{ scale: 1.1 }}
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              className="relative p-2 rounded-full border transition-all duration-300"
+              style={{
+                borderColor: theme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)',
+                background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)',
+                color: theme === 'dark' ? '#ffffff' : '#0a0a0a',
+              }}
+            >
+              {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+            </motion.button>
+
             {user ? (
               <>
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className="px-4 py-2 text-sm font-semibold text-white border border-white/20 rounded-lg hover:border-orange-500 hover:text-orange-400 transition-all"
+                  className="px-4 py-2 text-sm font-semibold border rounded-lg hover:border-orange-500 hover:text-orange-400 transition-all"
+                  style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
                 >
                   Dashboard
                 </button>
@@ -126,7 +148,8 @@ const Header = () => {
               <>
                 <button
                   onClick={() => navigate('/login')}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white border border-white/20 rounded-lg hover:border-orange-500 hover:text-orange-400 transition-all"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold border rounded-lg hover:border-orange-500 hover:text-orange-400 transition-all"
+                  style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
                 >
                   <LogIn size={14} /> Login
                 </button>
@@ -140,13 +163,28 @@ const Header = () => {
             )}
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <button
-            className="md:hidden p-2 text-white"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile: theme toggle + hamburger */}
+          <div className="md:hidden flex items-center justify-end gap-2">
+            <button
+              onClick={toggleTheme}
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              className="p-2 rounded-full border transition-all duration-300"
+              style={{
+                borderColor: theme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)',
+                background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)',
+                color: theme === 'dark' ? '#ffffff' : '#0a0a0a',
+              }}
+            >
+              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+            <button
+              className="p-2"
+              style={{ color: 'var(--text-primary)' }}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
