@@ -153,7 +153,7 @@ const Header = () => {
               whileTap={{ rotate: 20, scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
               title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              className="relative p-2 rounded-full border transition-all duration-300"
+              className="theme-toggle-btn relative p-2 rounded-full border transition-all duration-300"
               style={{
                 borderColor: theme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)',
                 background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)',
@@ -174,7 +174,7 @@ const Header = () => {
                 </button>
                 <button
                   onClick={signOut}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-black bg-orange-500 rounded-lg hover:bg-orange-400 transition-all"
+                  className="theme-toggle-btn p-2 rounded-full border transition-all duration-300"
                 >
                   <LogOut size={14} /> Logout
                 </button>

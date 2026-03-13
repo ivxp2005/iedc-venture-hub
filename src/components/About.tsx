@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Target, Award, Globe, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 
 import img1 from '../assets/images/eve1.jpg';
 import img2 from '../assets/images/eve2.jpg';
@@ -40,7 +41,7 @@ const CARD_H = 195;
 const RADIUS = 340;
 const ANGLE  = 360 / TOTAL;
 
-function RoundCarousel() {
+function RoundCarousel({ theme }: { theme: 'dark' | 'light' }) {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -90,10 +91,17 @@ function RoundCarousel() {
           {IMAGES.map((img, i) => {
             const d = dist(i);
             const isActive = d === 0;
-            // Opacity: front=1, ±1=0.55, ±2=0.28, back=0.08
-            const opacity = [1, 0.55, 0.28, 0.12, 0.08][Math.min(d, 4)];
+            // Opacity: keep side cards dimmer in light theme to avoid white washout
+            const opacity = theme === 'light'
+              ? [1, 0.42, 0.2, 0.1, 0.06][Math.min(d, 4)]
+              : [1, 0.55, 0.28, 0.12, 0.08][Math.min(d, 4)];
             // Glass tint strength
-            const tint = isActive ? 0 : Math.min(d * 0.22, 0.7);
+            const tint = isActive
+              ? (theme === 'light' ? 0.2 : 0)
+              : Math.min(d * (theme === 'light' ? 0.28 : 0.22), 0.78);
+            const exposureGuard = theme === 'light'
+              ? (isActive ? 0.12 : Math.min(0.18 + d * 0.08, 0.34))
+              : 0;
 
             return (
               <div
@@ -114,8 +122,12 @@ function RoundCarousel() {
                     opacity,
                     transition: 'opacity 0.5s ease, box-shadow 0.5s ease',
                     boxShadow: isActive
-                      ? '0 0 48px rgba(255,106,0,0.4), 0 0 0 1.5px rgba(255,106,0,0.55)'
-                      : '0 0 0 1px rgba(255,255,255,0.07)',
+                      ? theme === 'light'
+                        ? '0 0 28px rgba(255,106,0,0.18), 0 0 0 1.5px rgba(255,106,0,0.45)'
+                        : '0 0 48px rgba(255,106,0,0.4), 0 0 0 1.5px rgba(255,106,0,0.55)'
+                      : theme === 'light'
+                        ? '0 0 0 1px rgba(0,0,0,0.08)'
+                        : '0 0 0 1px rgba(255,255,255,0.07)',
                   }}
                 >
                   <img
@@ -141,12 +153,21 @@ function RoundCarousel() {
                     }}
                   />
 
+                  {theme === 'light' && (
+                    <div
+                      className="absolute inset-0"
+                      style={{ background: `rgba(0,0,0,${exposureGuard})` }}
+                    />
+                  )}
+
                   {/* Glass shimmer on non-active */}
                   {!isActive && (
                     <div
                       className="absolute inset-0 rounded-2xl"
                       style={{
-                        background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 60%)',
+                        background: theme === 'light'
+                          ? 'linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 60%)'
+                          : 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 60%)',
                         backdropFilter: d === 1 ? 'blur(1px)' : 'none',
                       }}
                     />
@@ -208,6 +229,7 @@ function RoundCarousel() {
 
 /* ─── Main component ────────────────────────────────────────────── */
 const About = () => {
+  const { theme } = useTheme();
   const features = [
     {
       icon: Target,
@@ -339,7 +361,7 @@ const About = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
           >
-            <RoundCarousel />
+            <RoundCarousel theme={theme} />
           </motion.div>
         </div>
 

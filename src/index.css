@@ -21,6 +21,12 @@
   filter: invert(1) hue-rotate(180deg);
 }
 
+/* Keep theme toggle legible on the light (inverted) UI */
+[data-theme="light"] .theme-toggle-btn {
+  filter: invert(1) hue-rotate(180deg);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18), 0 10px 24px rgba(0, 0, 0, 0.14);
+}
+
 /* Smooth transition when toggling */
 body {
   transition: filter 0.35s ease;

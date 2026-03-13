@@ -8,13 +8,20 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: "dark",
+  theme: "light",
   toggleTheme: () => {},
 });
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    return (localStorage.getItem("iedc-theme") as Theme) || "dark";
+    const storedTheme = localStorage.getItem("iedc-theme");
+    const hasExplicitPreference = localStorage.getItem("iedc-theme-explicit") === "true";
+
+    if (hasExplicitPreference && (storedTheme === "dark" || storedTheme === "light")) {
+      return storedTheme;
+    }
+
+    return "light";
   });
 
   useEffect(() => {
@@ -22,7 +29,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem("iedc-theme", theme);
   }, [theme]);
 
-  const toggleTheme = () => setTheme(prev => (prev === "dark" ? "light" : "dark"));
+  const toggleTheme = () => {
+    localStorage.setItem("iedc-theme-explicit", "true");
+    setTheme(prev => (prev === "dark" ? "light" : "dark"));
+  };
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
