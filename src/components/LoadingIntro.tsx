@@ -26,7 +26,7 @@ const LoadingIntro = ({ onComplete }: LoadingIntroProps) => {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center">
+    <div className="fixed inset-0 z-[9999] bg-white flex items-center justify-center">
       <video
         ref={videoRef}
         className="w-[min(86vw,480px)] max-h-[70vh] object-contain rounded-2xl"
