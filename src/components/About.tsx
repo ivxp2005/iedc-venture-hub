@@ -1,16 +1,13 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Target, Award, Globe, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useTheme } from '@/contexts/ThemeContext';
 
-import img1 from '../assets/images/eve1.jpg';
-import img2 from '../assets/images/eve2.jpg';
-import img3 from '../assets/images/eve3.jpg';
-import img4 from '../assets/images/eve4.jpg';
-import img5 from '../assets/images/IMG_7368.jpg';
-import img6 from '../assets/images/IMG_7374.jpg';
-import img7 from '../assets/images/IMG_7370.jpg';
-import img8 from '../assets/images/IMG_7454.jpg';
+import img2 from '../assets/images/eve2.webp';
+import img3 from '../assets/images/eve3.webp';
+import img5 from '../assets/images/IMG_7368.webp';
+import img6 from '../assets/images/IMG_7374.webp';
+import img7 from '../assets/images/IMG_7370.webp';
+import img8 from '../assets/images/IMG_7454.webp';
 
 /* ─── Animated counter ──────────────────────────────────────────── */
 import { animate } from 'framer-motion';
@@ -41,7 +38,7 @@ const CARD_H = 195;
 const RADIUS = 340;
 const ANGLE  = 360 / TOTAL;
 
-function RoundCarousel({ theme }: { theme: 'dark' | 'light' }) {
+function RoundCarousel() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -91,17 +88,6 @@ function RoundCarousel({ theme }: { theme: 'dark' | 'light' }) {
           {IMAGES.map((img, i) => {
             const d = dist(i);
             const isActive = d === 0;
-            // Opacity: keep side cards dimmer in light theme to avoid white washout
-            const opacity = theme === 'light'
-              ? [1, 0.42, 0.2, 0.1, 0.06][Math.min(d, 4)]
-              : [1, 0.55, 0.28, 0.12, 0.08][Math.min(d, 4)];
-            // Glass tint strength
-            const tint = isActive
-              ? (theme === 'light' ? 0.2 : 0)
-              : Math.min(d * (theme === 'light' ? 0.28 : 0.22), 0.78);
-            const exposureGuard = theme === 'light'
-              ? (isActive ? 0.12 : Math.min(0.18 + d * 0.08, 0.34))
-              : 0;
 
             return (
               <div
@@ -119,15 +105,10 @@ function RoundCarousel({ theme }: { theme: 'dark' | 'light' }) {
                 <div
                   className="relative w-full h-full rounded-2xl overflow-hidden"
                   style={{
-                    opacity,
                     transition: 'opacity 0.5s ease, box-shadow 0.5s ease',
                     boxShadow: isActive
-                      ? theme === 'light'
-                        ? '0 0 28px rgba(255,106,0,0.18), 0 0 0 1.5px rgba(255,106,0,0.45)'
-                        : '0 0 48px rgba(255,106,0,0.4), 0 0 0 1.5px rgba(255,106,0,0.55)'
-                      : theme === 'light'
-                        ? '0 0 0 1px rgba(0,0,0,0.08)'
-                        : '0 0 0 1px rgba(255,255,255,0.07)',
+                      ? '0 0 28px rgba(255,106,0,0.2), 0 0 0 1.5px rgba(255,106,0,0.5)'
+                      : '0 0 0 1px rgba(0,0,0,0.1)',
                   }}
                 >
                   <img
@@ -144,45 +125,6 @@ function RoundCarousel({ theme }: { theme: 'dark' | 'light' }) {
                       }
                     }}
                   />
-
-                  {/* Bottom gradient */}
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: `linear-gradient(180deg, rgba(0,0,0,${tint}) 0%, rgba(0,0,0,${Math.min(tint + 0.4, 0.88)}) 100%)`,
-                    }}
-                  />
-
-                  {theme === 'light' && (
-                    <div
-                      className="absolute inset-0"
-                      style={{ background: `rgba(0,0,0,${exposureGuard})` }}
-                    />
-                  )}
-
-                  {/* Glass shimmer on non-active */}
-                  {!isActive && (
-                    <div
-                      className="absolute inset-0 rounded-2xl"
-                      style={{
-                        background: theme === 'light'
-                          ? 'linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 60%)'
-                          : 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 60%)',
-                        backdropFilter: d === 1 ? 'blur(1px)' : 'none',
-                      }}
-                    />
-                  )}
-
-                  {/* Corner brackets on active */}
-                  {isActive && (
-                    <>
-                      <div className="absolute top-2 left-2 w-5 h-5 border-t-2 border-l-2 border-orange-500/80" />
-                      <div className="absolute top-2 right-2 w-5 h-5 border-t-2 border-r-2 border-orange-500/80" />
-                      <div className="absolute bottom-8 left-2 w-5 h-5 border-b-2 border-l-2 border-orange-500/80" />
-                      <div className="absolute bottom-8 right-2 w-5 h-5 border-b-2 border-r-2 border-orange-500/80" />
-                    </>
-                  )}
-
 
                 </div>
               </div>
@@ -229,7 +171,6 @@ function RoundCarousel({ theme }: { theme: 'dark' | 'light' }) {
 
 /* ─── Main component ────────────────────────────────────────────── */
 const About = () => {
-  const { theme } = useTheme();
   const features = [
     {
       icon: Target,
@@ -361,7 +302,7 @@ const About = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
           >
-            <RoundCarousel theme={theme} />
+            <RoundCarousel />
           </motion.div>
         </div>
 
