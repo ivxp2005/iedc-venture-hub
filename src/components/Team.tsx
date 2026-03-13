@@ -15,7 +15,6 @@ import pardhiv from '../assets/images/pardhiv.jpg';
 import dany from '../assets/images/dany.jpg';
 import aman from '../assets/images/AMAN.jpg';
 import suhail from '../assets/images/suhail.jpg';
-import akshara from '../assets/images/akshara.jpg';
 import niveditha from '../assets/images/niveditha.jpg';
 import gaori from '../assets/images/gaori.jpg';
 import abhin from '../assets/images/abhin.jpg';
@@ -32,8 +31,7 @@ const Team = () => {
         { id: 3,  name: "Pardhiv Suresh M",    position: "Technical Lead",                image: pardhiv,   linkedin: "https://www.linkedin.com/in/pardhiv-suresh-m/" },
         { id: 4,  name: "Dany Stephen V P",    position: "Quality & Operation Lead",      image: dany,      linkedin: "https://www.linkedin.com/in/dany-stephen",             pos: "70% 90%" },
         { id: 5,  name: "Aman Xavier",         position: "Finance Lead",                  image: aman,      linkedin: "https://www.linkedin.com/in/aman-xavier",              pos: "center 70%" },
-        { id: 6,  name: "Mohamed Suhail D",    position: "Quality & Operation Lead",      image: suhail,    linkedin: "https://www.linkedin.com/in/mohamed-suhail-d" },
-        { id: 7,  name: "Akshara A S",         position: "Branding & Marketing Lead",     image: akshara,   linkedin: "https://www.linkedin.com/in/akshara-a-s-" },
+        { id: 6,  name: "Mohamed Suhail D",    position: "Creative & Innovation Lead",    image: suhail,    linkedin: "https://www.linkedin.com/in/mohamed-suhail-d" },
         { id: 8,  name: "Niveditha A S",       position: "Community Lead",                image: niveditha, linkedin: "https://www.linkedin.com/in/niveditha-a-s-" },
         { id: 9,  name: "Gaori Nandhana D S",  position: "Women Entrepreneurship Lead",   image: gaori,     linkedin: "https://www.linkedin.com/in/gaori-nandana-d-s-477960374", pos: "center 60%" },
         { id: 10, name: "Abhin M Raj",         position: "IPR Research Lead",             image: abhin,     linkedin: "https://www.linkedin.com/in/abhinmraj",            pos: "40% 30%" },

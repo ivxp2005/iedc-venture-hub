@@ -46,12 +46,12 @@ const Header = () => {
 
   return (
     <>
-      {/* ── Big pop-in logo fixed top-left, only when at top ── */}
+      {/* ── Big pop-in logo fixed top-left, desktop only ── */}
       <AnimatePresence>
         {atTop && (
           <motion.div
             key={logoKey}
-            className="fixed top-4 left-10 z-[60] cursor-pointer pointer-events-auto"
+            className="hidden md:block fixed top-4 left-10 z-[60] cursor-pointer pointer-events-auto"
             initial={{ scale: 0, opacity: 0, rotate: -15 }}
             animate={{ scale: 1, opacity: 1, rotate: 0 }}
             exit={{ scale: 0, opacity: 0, rotate: 15 }}
@@ -74,10 +74,33 @@ const Header = () => {
         className="fixed top-0 left-0 right-0 z-50 py-5 bg-transparent"
       >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-3 items-center">
+        <div className="grid grid-cols-[auto_1fr_auto] md:grid-cols-3 items-center">
+          {/* Mobile: hamburger on left, theme toggle next to it */}
+          <div className="md:hidden flex items-center justify-start gap-2">
+            <button
+              className="p-2"
+              style={{ color: 'var(--text-primary)' }}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <button
+              onClick={toggleTheme}
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              className="p-2 rounded-full border transition-all duration-300"
+              style={{
+                borderColor: theme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)',
+                background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)',
+                color: theme === 'dark' ? '#ffffff' : '#0a0a0a',
+              }}
+            >
+              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+          </div>
+
           {/* Logo — hidden when at top (big logo covers it), shown when scrolled */}
           <motion.div
-            className="flex items-center space-x-3 cursor-pointer"
+            className="hidden md:flex items-center space-x-3 cursor-pointer"
             onClick={() => navigate('/')}
             whileHover={{ scale: 1.03 }}
             animate={{ opacity: atTop ? 0 : 1 }}
@@ -106,6 +129,21 @@ const Header = () => {
               </motion.a>
             ))}
           </nav>
+
+          {/* Mobile logo — smaller and pinned to right */}
+          <motion.div
+            className="md:hidden col-start-3 flex justify-end cursor-pointer"
+            onClick={() => navigate('/')}
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            <img
+              src={logoImg}
+              alt="IEDC CEM Logo"
+              className="h-16 w-auto object-contain drop-shadow-[0_0_18px_rgba(255,140,0,0.35)]"
+            />
+          </motion.div>
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center justify-end space-x-3">
@@ -160,28 +198,6 @@ const Header = () => {
             )}
           </div>
 
-          {/* Mobile: theme toggle + hamburger */}
-          <div className="md:hidden flex items-center justify-end gap-2">
-            <button
-              onClick={toggleTheme}
-              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              className="p-2 rounded-full border transition-all duration-300"
-              style={{
-                borderColor: theme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)',
-                background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)',
-                color: theme === 'dark' ? '#ffffff' : '#0a0a0a',
-              }}
-            >
-              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
-            <button
-              className="p-2"
-              style={{ color: 'var(--text-primary)' }}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
         </div>
 
         {/* Mobile Menu */}
