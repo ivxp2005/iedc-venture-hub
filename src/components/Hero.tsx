@@ -1,24 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { motion, animate } from "framer-motion";
-import { ArrowRight, Rocket, Zap, Users, ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Prism from "./Prism";
-
-/* ─── Animated counter ─────────────────────────────────────────── */
-function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
-  const nodeRef = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const node = nodeRef.current;
-    if (!node) return;
-    const controls = animate(0, to, {
-      duration: 2,
-      ease: "easeOut",
-      onUpdate(v) { node.textContent = Math.round(v) + suffix; },
-    });
-    return () => controls.stop();
-  }, [to, suffix]);
-  return <span ref={nodeRef}>0{suffix}</span>;
-}
 
 /* ─── Typewriter ────────────────────────────────────────────────── */
 function Typewriter({ text, delay = 0 }: { text: string; delay?: number }) {
@@ -45,12 +29,6 @@ function Typewriter({ text, delay = 0 }: { text: string; delay?: number }) {
 /* ─── Main component ────────────────────────────────────────────── */
 const Hero = () => {
   const navigate = useNavigate();
-
-  const stats = [
-    { icon: Rocket, value: 2, suffix: "+", label: "Startups Launched" },
-    { icon: Zap, value: 50, suffix: "+", label: "Innovation Events" },
-    { icon: Users, value: 10000, suffix: "+", label: "Community Members" },
-  ];
 
   const stagger = {
     hidden: {},
@@ -165,22 +143,6 @@ const Hero = () => {
             </motion.button>
           </motion.div>
 
-          {/* Stats */}
-          <motion.div variants={fadeUp} className="grid grid-cols-3 gap-4 max-w-xl w-full">
-            {stats.map((s, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ y: -3, borderColor: "rgba(255,106,0,0.5)" }}
-                className="flex flex-col items-center gap-1.5 p-4 rounded-xl bg-white/[0.03] border border-white/8 backdrop-blur-sm"
-              >
-                <s.icon className="w-4 h-4 text-orange-500/80" />
-                <span className="text-2xl font-black text-white tabular-nums">
-                  <Counter to={s.value} suffix={s.suffix} />
-                </span>
-                <span className="text-[11px] text-white/40 uppercase tracking-wider leading-tight text-center">{s.label}</span>
-              </motion.div>
-            ))}
-          </motion.div>
         </motion.div>
 
         {/* ── Scroll indicator ── */}

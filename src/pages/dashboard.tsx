@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Bell, User, LogOut, Briefcase, Home, Calendar,
-  TrendingUp, Star, ChevronRight, Rocket, Zap, Users,
+  Bell, User, LogOut, Home,
+  Star, ChevronRight, Rocket, Zap, Users,
   Settings, Award
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -54,9 +54,9 @@ const Dashboard = () => {
   ];
 
   const quickActions = [
-    { icon: Calendar, label: "Browse Events", desc: "View upcoming hackathons & workshops", action: () => navigate("/#events") },
-    { icon: Briefcase, label: "Join Programs", desc: "Apply for incubation programs", action: () => navigate("/#programs") },
-    { icon: TrendingUp, label: "Success Stories", desc: "Read inspiring founder stories", action: () => navigate("/#success") },
+    { icon: Users, label: "Meet the Team", desc: "Connect with the IEDC leadership team", action: () => navigate("/#team") },
+    { icon: Rocket, label: "About IEDC", desc: "Learn about our innovation mission", action: () => navigate("/#about") },
+    { icon: Home, label: "Go to Home", desc: "Return to the main landing page", action: () => navigate("/") },
   ];
 
   const handleLogout = async () => {

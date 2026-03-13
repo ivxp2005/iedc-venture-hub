@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Star, TrendingUp, Users, DollarSign, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const SuccessStories = () => {
@@ -36,13 +36,6 @@ const SuccessStories = () => {
     },
   ];
 
-  const achievements = [
-    { icon: TrendingUp, number: "2+", label: "Startups Launched" },
-    { icon: DollarSign, number: "₹50K+", label: "Total Funding Raised" },
-    { icon: Users, number: "10k+", label: "Lives Impacted" },
-    { icon: Star, number: "95%", label: "Success Rate" },
-  ];
-
   return (
     <section id="success" className="py-28 bg-zinc-950 relative overflow-hidden">
       <div className="absolute inset-0 grid-bg opacity-20 pointer-events-none" />
@@ -58,9 +51,6 @@ const SuccessStories = () => {
           transition={{ duration: 0.7 }}
           className="text-center mb-20"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full border border-orange-500/30 bg-orange-500/10 text-orange-400 text-sm font-medium mb-6">
-            Highlights
-          </span>
           <h2 className="text-4xl lg:text-5xl font-bold mb-5">
             Our <span className="text-orange-500">Stories</span>
           </h2>
@@ -120,27 +110,6 @@ const SuccessStories = () => {
           ))}
         </div>
 
-        {/* Achievement Stats */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
-          {achievements.map((a, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              whileHover={{ y: -4 }}
-              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-orange-500/40 transition-all text-center"
-            >
-              <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
-                <a.icon className="w-5 h-5 text-orange-400" />
-              </div>
-              <h3 className="text-3xl font-bold text-orange-400">{a.number}</h3>
-              <p className="text-white/50 text-sm">{a.label}</p>
-            </motion.div>
-          ))}
-        </div>
-
         {/* CTA Banner */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -170,10 +139,10 @@ const SuccessStories = () => {
             <motion.button
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.getElementById('team')?.scrollIntoView({ behavior: 'smooth' })}
               className="px-8 py-4 border border-white/20 text-white font-semibold rounded-xl text-lg hover:border-orange-500 hover:text-orange-400 transition-all"
             >
-              Schedule a Call
+              Meet the Team
             </motion.button>
           </div>
         </motion.div>

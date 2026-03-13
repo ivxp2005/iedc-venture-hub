@@ -14,11 +14,7 @@ const Footer = () => {
 
   const quickLinks = [
     { title: "About IEDC",      href: "#about" },
-    { title: "Events",          href: "#events" },
-    { title: "Programs",        href: "#programs" },
-    { title: "Success Stories", href: "#success" },
     { title: "Team",            href: "#team" },
-    { title: "Contact",         href: "#contact" },
   ];
 
   const programs = [
